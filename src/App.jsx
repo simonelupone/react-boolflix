@@ -3,6 +3,7 @@ import axios from "axios";
 
 const App = () => {
   const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState([]);
 
   const getMovies = (e) => {
     e.preventDefault();
@@ -27,7 +28,7 @@ const App = () => {
     axios
       .request(options)
       .then((response) => {
-        console.log(response.data.results);
+        setMovies(response.data.results);
       })
       .catch((err) => {
         console.error(err);
@@ -60,6 +61,35 @@ const App = () => {
             </button>
           </div>
         </form>
+
+        <div>
+          <h1 className="my-4 font-black text-xl">Movies</h1>
+
+          <ul>
+            {movies.map((movie) => (
+              <li
+                key={movie.id}
+                className="my-2 p-4 border border-gray-500 rounded-lg"
+              >
+                <div>
+                  Title: <span>{movie.title}</span>
+                </div>
+
+                <div>
+                  Original Title: <span>{movie.original_title}</span>
+                </div>
+
+                <div>
+                  Language: <span>{movie.original_language}</span>
+                </div>
+
+                <div>
+                  Rating: <span>{movie.vote_average}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
