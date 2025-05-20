@@ -1,6 +1,41 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
+
+const query = "batman";
+
+//  template to axios config
+const options = {
+  method: "GET",
+  url: "https://api.themoviedb.org/3/search/movie",
+  params: {
+    query: query,
+    include_adult: "false",
+    language: "en-US",
+    page: "1",
+  },
+  headers: {
+    accept: "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZmMyZTU3ZjUxZDlkMjU5MTRmMjAzMDVmN2FhYzNlNCIsIm5iZiI6MTcxMzM0NTMxMS41NDgsInN1YiI6IjY2MWY5MzFmZWNhZWY1MDE2M2Y5ODMwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hF4TPGKH5QMB8HY-C3qP6C_RUeIbyJZ5QEa9Mzt4Eqw",
+  },
+};
 
 const App = () => {
+  const getMovies = () => {
+    axios
+      .request(options)
+      .then((response) => {
+        console.log(response.data.results);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getMovies();
+  }, []);
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-7xl max-w-sm p-4">
