@@ -35,6 +35,11 @@ const App = () => {
       });
   };
 
+  const handleClearInput = () => {
+    setQuery("");
+    setMovies([]);
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-7xl max-w-sm p-4">
@@ -54,6 +59,7 @@ const App = () => {
               Search
             </button>
             <button
+              onClick={handleClearInput}
               className="flex-shrink-0 border-transparent border-4 text-red-500 hover:text-red-800 text-sm py-1 px-2 rounded"
               type="button"
             >
