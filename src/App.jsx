@@ -40,6 +40,18 @@ const App = () => {
     setMovies([]);
   };
 
+  const handleCountryCodes = (code) => {
+    if (code === "en") {
+      return "gb";
+    } else if (code === "ja") {
+      return "jp";
+    } else if (code === "uk") {
+      return "ua";
+    } else {
+      return code;
+    }
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-7xl max-w-sm p-4">
@@ -75,7 +87,7 @@ const App = () => {
             {movies.map((movie) => (
               <li
                 key={movie.id}
-                className="my-2 p-4 border border-gray-500 rounded-lg"
+                className="my-2 p-4 border border-gray-500 rounded-lg bg-neutral-200"
               >
                 <div>
                   Title: <span>{movie.title}</span>
@@ -85,8 +97,12 @@ const App = () => {
                   Original Title: <span>{movie.original_title}</span>
                 </div>
 
-                <div>
-                  Language: <span>{movie.original_language}</span>
+                <div className="flex items-center gap-2">
+                  <span>Language: </span>
+                  <img
+                    src={`https://flagcdn.com/w20/${handleCountryCodes(movie.original_language)}.png`}
+                    alt=""
+                  />
                 </div>
 
                 <div>
