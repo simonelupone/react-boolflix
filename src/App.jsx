@@ -1,21 +1,23 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://api.themoviedb.org/3/search/movie";
+const API_URL = "https://api.themoviedb.org/3/search/";
 const API_KEY =
   "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZmMyZTU3ZjUxZDlkMjU5MTRmMjAzMDVmN2FhYzNlNCIsIm5iZiI6MTcxMzM0NTMxMS41NDgsInN1YiI6IjY2MWY5MzFmZWNhZWY1MDE2M2Y5ODMwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hF4TPGKH5QMB8HY-C3qP6C_RUeIbyJZ5QEa9Mzt4Eqw";
 
 const App = () => {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [media, setMedia] = useState([]);
 
-  const getMovies = (e) => {
+  const getMedia = (e) => {
     e.preventDefault();
 
-    //  template to axios config
-    const options = {
+    // this function (options taken from 'the movie database' docs) handles 2 params to
+    // set multiple request parameters.
+    // type is @string that identifies /tv or /movie
+    const handleOptions = (type) => ({
       method: "GET",
-      url: `${API_URL}`,
+      url: API_URL + type,
       params: {
         query: query,
         include_adult: "false",
@@ -26,12 +28,25 @@ const App = () => {
         accept: "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
-    };
+    });
 
-    axios
-      .request(options)
-      .then((response) => {
-        setMovies(response.data.results);
+    // define axios requests with a specific argument
+    const movieRequest = axios.request(handleOptions("movie"));
+    const tvRequest = axios.request(handleOptions("tv"));
+
+    // use Promise.all that is a static method to make multiple requests.
+    // it accepts an array of promises -> movieReq and tvReq
+    Promise.all([movieRequest, tvRequest])
+      // two arguments in arrow function to split response
+      .then(([movieResponse, tvResponse]) => {
+        // save the responses
+        const movies = movieResponse.data.results;
+        const tvShows = tvResponse.data.results;
+
+        console.log(movies);
+        console.log(tvShows);
+
+        setMedia([...movies, ...tvShows]);
       })
       .catch((err) => {
         console.error(err);
@@ -40,7 +55,7 @@ const App = () => {
 
   const handleClearInput = () => {
     setQuery("");
-    setMovies([]);
+    setMedia([]);
   };
 
   const handleCountryCodes = (code) => {
@@ -59,7 +74,7 @@ const App = () => {
   return (
     <div className="w-full flex justify-center">
       <div className="w-3xl p-4">
-        <form className="w-full" onSubmit={getMovies}>
+        <form className="w-full" onSubmit={getMedia}>
           <div className="flex items-center border-b border-red-500 py-2">
             <input
               value={query}
@@ -88,29 +103,31 @@ const App = () => {
           <h1 className="my-4 font-black text-xl">Movies</h1>
 
           <ul>
-            {movies.map((movie) => (
+            {media.map((m) => (
               <li
-                key={movie.id}
+                key={m.id}
                 className="my-2 p-4 border border-gray-500 rounded-lg bg-neutral-200"
               >
                 <div>
-                  Title: <span>{movie.title}</span>
+                  <span>Title: </span>
+                  <span>{m.title || m.name}</span>
                 </div>
 
                 <div>
-                  Original Title: <span>{movie.original_title}</span>
+                  <span>Original Title: </span>
+                  <span>{m.original_title || m.original_name}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span>Language: </span>
                   <img
-                    src={`https://flagcdn.com/w20/${handleCountryCodes(movie.original_language)}.png`}
+                    src={`https://flagcdn.com/w20/${handleCountryCodes(m.original_language)}.png`}
                     alt=""
                   />
                 </div>
 
                 <div>
-                  Rating: <span>{movie.vote_average}</span>
+                  Rating: <span>{m.vote_average}</span>
                 </div>
               </li>
             ))}
