@@ -30,7 +30,7 @@ const App = () => {
       },
     });
 
-    // define axios requests with a specific argument
+    // define axios requests alias with a specific argument that is the config (options)
     const movieRequest = axios.request(handleOptions("movie"));
     const tvRequest = axios.request(handleOptions("tv"));
 
@@ -106,28 +106,37 @@ const App = () => {
             {media.map((m) => (
               <li
                 key={m.id}
-                className="my-2 p-4 border border-gray-500 rounded-lg bg-neutral-200"
+                className="my-2 p-4 flex justify-between items-center border border-gray-500 rounded-lg bg-neutral-200"
               >
                 <div>
-                  <span>Title: </span>
-                  <span>{m.title || m.name}</span>
+                  <div>
+                    <span>Title: </span>
+                    <span>{m.title || m.name}</span>
+                  </div>
+
+                  <div>
+                    <span>Original Title: </span>
+                    <span>{m.original_title || m.original_name}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span>Language: </span>
+                    <img
+                      src={`https://flagcdn.com/w20/${handleCountryCodes(m.original_language)}.png`}
+                      alt=""
+                    />
+                  </div>
+
+                  <div>
+                    Rating: <span>{m.vote_average}</span>
+                  </div>
                 </div>
 
                 <div>
-                  <span>Original Title: </span>
-                  <span>{m.original_title || m.original_name}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span>Language: </span>
                   <img
-                    src={`https://flagcdn.com/w20/${handleCountryCodes(m.original_language)}.png`}
+                    src={`https://image.tmdb.org/t/p/w92/${m.poster_path}`}
                     alt=""
                   />
-                </div>
-
-                <div>
-                  Rating: <span>{m.vote_average}</span>
                 </div>
               </li>
             ))}
