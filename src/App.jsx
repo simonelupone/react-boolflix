@@ -1,6 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_URL = "https://api.themoviedb.org/3/search/movie";
+const API_KEY =
+  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZmMyZTU3ZjUxZDlkMjU5MTRmMjAzMDVmN2FhYzNlNCIsIm5iZiI6MTcxMzM0NTMxMS41NDgsInN1YiI6IjY2MWY5MzFmZWNhZWY1MDE2M2Y5ODMwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hF4TPGKH5QMB8HY-C3qP6C_RUeIbyJZ5QEa9Mzt4Eqw";
+
 const App = () => {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
@@ -11,7 +15,7 @@ const App = () => {
     //  template to axios config
     const options = {
       method: "GET",
-      url: "https://api.themoviedb.org/3/search/movie",
+      url: `${API_URL}`,
       params: {
         query: query,
         include_adult: "false",
@@ -20,8 +24,7 @@ const App = () => {
       },
       headers: {
         accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZmMyZTU3ZjUxZDlkMjU5MTRmMjAzMDVmN2FhYzNlNCIsIm5iZiI6MTcxMzM0NTMxMS41NDgsInN1YiI6IjY2MWY5MzFmZWNhZWY1MDE2M2Y5ODMwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hF4TPGKH5QMB8HY-C3qP6C_RUeIbyJZ5QEa9Mzt4Eqw",
+        Authorization: `Bearer ${API_KEY}`,
       },
     };
 
@@ -41,21 +44,22 @@ const App = () => {
   };
 
   const handleCountryCodes = (code) => {
-    if (code === "en") {
-      return "gb";
-    } else if (code === "ja") {
-      return "jp";
-    } else if (code === "uk") {
-      return "ua";
-    } else {
-      return code;
+    switch (code) {
+      case "en":
+        return "gb";
+      case "ja":
+        return "jp";
+      case "uk":
+        return "ua";
+      default:
+        return code;
     }
   };
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-7xl max-w-sm p-4">
-        <form className="w-full max-w-sm" onSubmit={getMovies}>
+      <div className="w-3xl p-4">
+        <form className="w-full" onSubmit={getMovies}>
           <div className="flex items-center border-b border-red-500 py-2">
             <input
               value={query}
