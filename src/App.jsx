@@ -1,7 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faStarHalfAlt,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 
 const API_URL = "https://api.themoviedb.org/3/search/";
@@ -75,14 +79,21 @@ const App = () => {
   };
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-3xl p-4">
-        <form className="w-full" onSubmit={getMedia}>
-          <div className="flex items-center border-b border-red-500 py-2">
+    <>
+      <header className="h-24 mb-8 p-4 sm:flex sm:justify-between sm:items-center">
+        <div className="max-w-44">
+          <img
+            src="https://images.ctfassets.net/4cd45et68cgf/7LrExJ6PAj6MSIPkDyCO86/542b1dfabbf3959908f69be546879952/Netflix-Brand-Logo.png"
+            alt="Netflix logo"
+          />
+        </div>
+
+        <form className="w-xs" onSubmit={getMedia}>
+          <div className="flex items-center py-2">
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              className="w-full text-red-500/50 mr-3 py-1 px-2 border-b border-red-500 rounded-lg "
               type="text"
               placeholder="Search..."
             />
@@ -90,7 +101,7 @@ const App = () => {
               className="flex-shrink-0 bg-red-500 hover:bg-red-700 border-red-500 hover:border-red-700 text-sm border-4 text-white py-1 px-2 rounded"
               type="submit"
             >
-              Search
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
             </button>
             <button
               onClick={handleClearInput}
@@ -101,74 +112,94 @@ const App = () => {
             </button>
           </div>
         </form>
+      </header>
 
-        <div>
-          <h1 className="my-4 font-black text-xl">Movies</h1>
+      <main>
+        <div className="w-full p-4">
+          <div className="p-4">
+            <div className="">
+              <h1 className="my-4 font-black text-xl text-white uppercase">
+                Original Netflix
+              </h1>
 
-          <ul>
-            {media.map((m) => (
-              <li
-                key={m.id}
-                className="my-2 p-4 flex justify-between items-center border border-gray-500 rounded-lg bg-neutral-200"
-              >
-                <div>
-                  <div>
-                    <span>Title: </span>
-                    <span>{m.title || m.name}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                {media.map((m) => (
+                  <div key={m.id} className="card my-2">
+                    <div className="card-inner">
+                      <div className="card-front">
+                        {m.poster_path ? (
+                          <img
+                            src={`https://image.tmdb.org/t/p/w342/${m.poster_path}`}
+                            alt={m.title || m.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-800 flex items-center justify-center text-white">
+                            No Image found
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="card-back p-4">
+                        <div className="mb-2">
+                          <span className="font-bold">Title: </span>
+                          <span>{m.title || m.name}</span>
+                        </div>
+
+                        <div className="mb-2">
+                          <span className="font-bold">Original Title: </span>
+                          <span>{m.original_title || m.original_name}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-bold">Language: </span>
+                          <img
+                            src={`https://flagcdn.com/w20/${handleCountryCodes(m.original_language)}.png`}
+                            alt=""
+                            className="h-4"
+                          />
+                        </div>
+
+                        <div>
+                          <span className="font-bold">Rating: </span>
+                          {[1, 2, 3, 4, 5].map((starIndex) => {
+                            const rating = m.vote_average / 2;
+
+                            return (
+                              <span key={starIndex}>
+                                {rating >= starIndex ? (
+                                  <FontAwesomeIcon
+                                    icon={faStar}
+                                    color={"#FFC300"}
+                                  />
+                                ) : rating > starIndex - 0.5 ? (
+                                  <FontAwesomeIcon
+                                    icon={faStarHalfAlt}
+                                    color={"#FFC300"}
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faStarRegular}
+                                    color={"#FFC300"}
+                                  />
+                                )}
+                              </span>
+                            );
+                          })}
+                          <span className="ml-1">
+                            ({(m.vote_average / 2).toFixed(1)})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div>
-                    <span>Original Title: </span>
-                    <span>{m.original_title || m.original_name}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span>Language: </span>
-                    <img
-                      src={`https://flagcdn.com/w20/${handleCountryCodes(m.original_language)}.png`}
-                      alt=""
-                    />
-                  </div>
-
-                  <div>
-                    <span>Rating: </span>
-                    {[1, 2, 3, 4, 5].map((starIndex) => {
-                      const rating = m.vote_average / 2;
-
-                      return (
-                        <span key={starIndex}>
-                          {rating >= starIndex ? (
-                            <FontAwesomeIcon icon={faStar} color={"#FFC300"} />
-                          ) : rating > starIndex - 0.5 ? (
-                            <FontAwesomeIcon
-                              icon={faStarHalfAlt}
-                              color={"#FFC300"}
-                            />
-                          ) : (
-                            <FontAwesomeIcon
-                              icon={faStarRegular}
-                              color={"#FFC300"}
-                            />
-                          )}
-                        </span>
-                      );
-                    })}
-                    <span> ({m.vote_average / 2})</span>
-                  </div>
-                </div>
-
-                <div>
-                  <img
-                    src={`https://image.tmdb.org/t/p/w92/${m.poster_path}`}
-                    alt=""
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </main>
+    </>
   );
 };
 
