@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
+import { faStar as faStarRegular } from "@fortawesome/free-regular-svg-icons";
 
 const API_URL = "https://api.themoviedb.org/3/search/";
 const API_KEY =
@@ -128,7 +131,29 @@ const App = () => {
                   </div>
 
                   <div>
-                    Rating: <span>{m.vote_average}</span>
+                    <span>Rating: </span>
+                    {[1, 2, 3, 4, 5].map((starIndex) => {
+                      const rating = m.vote_average / 2;
+
+                      return (
+                        <span key={starIndex}>
+                          {rating >= starIndex ? (
+                            <FontAwesomeIcon icon={faStar} color={"#FFC300"} />
+                          ) : rating > starIndex - 0.5 ? (
+                            <FontAwesomeIcon
+                              icon={faStarHalfAlt}
+                              color={"#FFC300"}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faStarRegular}
+                              color={"#FFC300"}
+                            />
+                          )}
+                        </span>
+                      );
+                    })}
+                    <span> ({m.vote_average / 2})</span>
                   </div>
                 </div>
 
